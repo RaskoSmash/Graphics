@@ -14,3 +14,14 @@ struct Vertex;
 Geometry makeGeometry(const Vertex *verts, size_t vsize, const unsigned * tris, size_t tsize);
 
 void freeGeometry(Geometry &geo);
+
+struct Shader
+{
+	unsigned handle;
+};
+
+Shader makeShader(const char *vsource, const char *fsource);
+
+void freeShader(Shader &shady);
+
+void draw(const Shader &shady, const Geometry &geo);

@@ -40,3 +40,47 @@ void freeGeometry(Geometry & geo)
 	glDeleteBuffers(1, &geo.vao);
 	geo = { 0,0,0,0 };
 }
+
+Shader makeShader(const char * vsource, const char * fsource)
+{
+	Shader returnVal;
+	//create our variables
+	returnVal.handle = glCreateProgram();
+	unsigned vs = glCreateShader(GL_VERTEX_SHADER);
+	unsigned fs = glCreateShader(GL_FRAGMENT_SHADER);
+	//initialize
+	glShaderSource(vs, 1, &vsource, 0);
+	glShaderSource(fs, 1, &fsource, 0);
+	//compile
+	glCompileShader(vs);
+	glCompileShader(fs);
+	//link shaders into a single program
+	glAttachShader(returnVal.handle, vs);
+	glAttachShader(returnVal.handle, fs);
+	glLinkProgram(returnVal.handle);
+	//no longer need these
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return returnVal;
+}
+
+void freeShader(Shader & shady)
+{
+	glDeleteProgram(shady.handle);
+	shady.handle = 0;
+}
+
+void draw(const Shader &shady, const Geometry &geo)
+{
+
+	glUseProgram(shady.handle);
+
+	//binding the VAO also binds IBO(tri) and VBO (verts)
+	glBindVertexArray(geo.vao);
+
+	//Draw elements will draw the verts that are currently bound
+	//using an array of indices.
+	//IF AN IBO IS BOUND, we dont need to provide indices.
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
