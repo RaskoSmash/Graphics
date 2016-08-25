@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="crenderutils.h" />
+    <ClInclude Include="gldecs.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>

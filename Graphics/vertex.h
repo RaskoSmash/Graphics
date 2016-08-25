@@ -2,7 +2,7 @@
 
 struct Vertex
 {
-	float position[4] = { 0,0,0,1 };
+	float position[4];
 	float color[4];
 	//float normal[4];
 	//float tangent[4];
