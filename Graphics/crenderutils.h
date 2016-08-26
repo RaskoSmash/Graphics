@@ -22,6 +22,14 @@ struct Shader
 
 Shader makeShader(const char *vsource, const char *fsource);
 
+long copyFileToArray(char *dest, size_t dlen, const char *path);
+
+Shader loadShader(const char *vpath, const char *fpath);
+
 void freeShader(Shader &shady);
 
 void draw(const Shader &shady, const Geometry &geo);
+
+std::string cppStyleFileToString(const char *path);
+
+Geometry loadObj(const char *path);
