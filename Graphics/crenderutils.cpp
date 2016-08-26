@@ -126,9 +126,37 @@ std::string cppStyleFileToString(const char *path)
 Geometry loadObj(const char * path)
 {
 	tinyobj::attrib_t attrib;
-
 	std::vector<tinyobj::shape_t> shapes;
-	return Geometry();
+	std::vector<tinyobj::material_t> materials;
+	std::string err;
+
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, path);
+
+	Vertex   *verts = new Vertex[attrib.vertices.size() / 3];
+	unsigned * tris = new unsigned[shapes[0].mesh.indices.size()];
+
+	for (int i = 0; i < attrib.vertices.size() / 3; ++i)
+	{
+		verts[i] = { attrib.vertices[i * 3],
+			attrib.vertices[i * 3 + 1],
+			attrib.vertices[i * 3 + 2], 1 };
+
+		verts[i].color[0] = rand() * 1.0f / RAND_MAX;
+		verts[i].color[1] = rand() * 1.0f / RAND_MAX;
+		verts[i].color[2] = rand() * 1.0f / RAND_MAX;
+		verts[i].color[3] = 1;
+	}
+
+	for (int i = 0; i < shapes[0].mesh.indices.size(); ++i)
+		tris[i] = shapes[0].mesh.indices[i].vertex_index;
+
+	Geometry retval = makeGeometry(verts, attrib.vertices.size() / 3,
+		tris, shapes[0].mesh.indices.size());
+
+	delete[] verts;
+	delete[] tris;
+	// then we can call makeGeometry as per normal.
+	return retval;
 }
 
 Shader loadShader(const char *vpath, const char *fpath)

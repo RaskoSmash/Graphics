@@ -1,15 +1,15 @@
-#version 330\n
+#version 330
 //locations are attributes from the vertex
 //in brings data in from the previous
+
 layout(location = 0)in vec4 position;
 layout(location = 1)in vec4 color;
 
 //out sends data to the next step of the pipeline
 out vec4 vColor;
-out vec4 dinosaur;
+
 void main() 
 { 
-	dinosuars = (position + color)/3;
 	vColor = color; 
 	gl_Position = position; 
 }

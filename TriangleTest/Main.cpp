@@ -33,8 +33,10 @@ int main()
 		"out vec4 outColor;"
 		"void main () { outColor = vec4(1,0,0,1) - vColor; } ";
 
-	Geometry geo1 = makeGeometry(vert, 3, tris, 3);
+	Geometry geo3 = makeGeometry(vert, 3, tris, 3);
 	Shader shady3 = makeShader(vsource, fsource);
+
+	Geometry geo1 = loadObj("../res/models/sphere.obj");
 
 	Shader shady1 = loadShader("../res/shaders/simpleVert.txt","../res/shaders/simpleFrag.txt");
 
