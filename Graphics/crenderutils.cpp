@@ -79,17 +79,29 @@ void freeShader(Shader &shader)
 	shader.handle = 0;
 }
 
-void draw(const Shader &shader, const Geometry &geometry)
+void draw(const Shader &shady, const Geometry &geo)
 {
-	glUseProgram(shader.handle);
+	glUseProgram(shady.handle);
 
 	// binding the VAO also binds the IBO (tri) and VBO (verts)
-	glBindVertexArray(geometry.vao);
+	glBindVertexArray(geo.vao);
 
 	// Draw elements will draw the vertices that are currently bound
 	// using an array of indices.
 	// IF AN IBO IS BOUND, we don't need to provide any indices.
-	glDrawElements(GL_TRIANGLES, geometry.size, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
+
+void draw(const Shader & shady, const Geometry & geo, float time)
+{
+	glUseProgram(shady.handle);
+
+	glBindVertexArray(geo.vao);
+
+	int loc = glGetUniformLocation(shady.handle, "time");
+	glUniform1f(loc, time);
+
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 
 // return the number of characters in the file

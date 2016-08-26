@@ -40,9 +40,12 @@ int main()
 
 	gallery.init();
 
+	float time = 0;
+
 	while (window.step())
 	{
-		draw(gallery.getShader("defaultShader"), gallery.getObject("sphere"));
+		time += 0.01666667;
+		draw(gallery.getShader("defaultShader"), gallery.getObject("sphere"), time);
 		//draw(shady2, geo2);
 	}
 
@@ -109,3 +112,4 @@ int main()
 //
 //	return 0;
 //}
+
