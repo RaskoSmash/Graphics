@@ -98,6 +98,8 @@ void draw(const Shader & shady, const Geometry & geo, float time)
 
 	glBindVertexArray(geo.vao);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	int loc = glGetUniformLocation(shady.handle, "time");
 	glUniform1f(loc, time);
 
