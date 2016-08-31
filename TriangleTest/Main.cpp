@@ -44,6 +44,7 @@ int main()
 
 	while (window.step())
 	{
+		//time is a uniform
 		time += 0.01666667;
 		draw(gallery.getShader("defaultShader"), gallery.getObject("sphere"), time);
 		//draw(shady2, geo2);
