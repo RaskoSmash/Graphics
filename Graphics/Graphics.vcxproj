@@ -129,12 +129,14 @@
   <ItemGroup>
     <ClCompile Include="crenderutils.cpp" />
     <ClCompile Include="Gallery.cpp" />
+    <ClCompile Include="timer.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="crenderutils.h" />
     <ClInclude Include="Gallery.h" />
     <ClInclude Include="gldecs.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
