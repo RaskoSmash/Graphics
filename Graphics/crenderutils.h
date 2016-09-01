@@ -33,6 +33,8 @@ void draw(const Shader &shady, const Geometry &geo);
 
 void draw(const Shader &shady, const Geometry &geo, float time);
 
+void draw(const Shader &shady, const Geometry &geo, const float P[16], const float V[16], const float M[16]);
+
 std::string cppStyleFileToString(const char *path);
 
 Geometry loadObj(const char *path);

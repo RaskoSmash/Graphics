@@ -106,6 +106,23 @@ void draw(const Shader & shady, const Geometry & geo, float time)
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 
+void draw(const Shader & shady, const Geometry & geo, const float P[16], const float V[16], const float M[16])
+{
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glUseProgram(shady.handle);
+
+	glBindVertexArray(geo.vao);
+
+	glUniformMatrix4fv(0, 1, GL_FALSE, P);
+	glUniformMatrix4fv(1, 1, GL_FALSE, V);
+	glUniformMatrix4fv(2, 1, GL_FALSE, M);
+
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
+
 // return the number of characters in the file
 long copyFileToArray(char *dest, size_t dlen, const char *path)
 {
