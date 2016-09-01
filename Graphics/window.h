@@ -4,6 +4,7 @@
 class Window
 {
 private:
+	friend class Input;
 	int width, height;
 	char title[64];
 	bool isInitalized = false;

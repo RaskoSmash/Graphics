@@ -8,16 +8,21 @@
 #include "GLM\glm.hpp"
 #include "GLM\ext.hpp"
 #include "timer.h"
+#include "input.h"
+#include "camera.h"
 int main()
 {
 
 	Window  window;
 	Gallery gallery;
 	Timer	time;
+	Input	input;
+	FlyCamera	flycam;
 
-
-	window.init(960, 960);
+	window.init(1280, 720);
 	gallery.init();
+	input.init(window);
+	time.init();
 
 	Vertex verts[] = { { 1,1,0,1 },{ 1,-1,0,1 },{ -1,-1,0,1 },{ -1,1,0,1 } };
 
@@ -47,18 +52,28 @@ int main()
 	//proj = glm::perspective(45.f, 1.f, .1f, 10.f);
 	model2 =  glm::rotate(180.f, glm::vec3(0, -1, 0));
 	float dt = 0;
+	float ct = 0;
 
 	model3 =  glm::rotate(180.f, glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(5, 5, 5));
 
+	flycam.jumpTo(glm::vec3(20, 0, 0));
+	flycam.lookAt(glm::vec3(0,0,0));
+
 	while (window.step())
 	{
+		input.step();
 		time.step();
-		dt = time.getTotalTime();
 
-		view = glm::lookAt(glm::vec3(10.f + cosf(dt) * 5, 0.f, 0.f),
-			glm::vec3(0, 0, 0.0f),
-			glm::vec3(0, 1, 0.f));
+		if(input.getKeyState('D') == Input::DOWN)
+			ct += time.getDeltaTime();
+		if (input.getKeyState('A') == Input::DOWN)
+			ct -= time.getDeltaTime();
+		
 
+		view = flycam.getView();
+		proj = flycam.getProjection();
+
+		flycam.update(input, time, 5);
 
 		model = glm::rotate(dt, glm::vec3(0, 1, 0));
 
@@ -78,6 +93,8 @@ int main()
 			glm::value_ptr(proj), dt);
 	}
 
+	input.term();
+	time.term();
 	gallery.term();
 	window.term();
 	return 0;

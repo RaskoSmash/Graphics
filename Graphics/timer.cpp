@@ -4,6 +4,9 @@
 bool Timer::init()
 {
 	glfwSetTime(0);
+	previousTime = 0;
+	currentTime = 0;
+	deltaTime = 0;
 	return true;
 }
 
