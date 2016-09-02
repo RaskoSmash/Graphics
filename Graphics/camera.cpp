@@ -17,9 +17,9 @@ void FlyCamera::update(const Input &in, const Timer &t, const float speed)
 	right = glm::cross(direction, glm::vec3(0, 1, 0));
 	direction = glm::mat3(glm::rotate(pitch, right)) * direction;
 
-	/*direction.x = cos(yaw) * sin(pitch);
-	direction.y = cos(yaw);
-	direction.z = sin(yaw) * sin(pitch);*/
+	direction.x = sin(yaw);
+	direction.y = -(sinf(yaw) * cosf(pitch));
+	direction.z = -(cosf(yaw) * sinf(pitch));
 
 	if (in.getKeyState('W') == Input::DOWN) { moveDir += direction; }
 	if (in.getKeyState('S') == Input::DOWN) { moveDir -= direction; }
@@ -33,4 +33,9 @@ void FlyCamera::update(const Input &in, const Timer &t, const float speed)
 		moveDir = glm::normalize(moveDir);
 		position += moveDir * t.getDeltaTime() * speed;
 	}
+}
+
+void FlyCamera::lookAt(const glm::vec3 & target)
+{
+	direction = glm::normalize(target - position);
 }

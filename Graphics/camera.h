@@ -20,10 +20,7 @@ public:
 	{
 		position = jump;
 	}
-	void lookAt(const glm::vec3 &target)
-	{
-		direction = glm::normalize(target - position);
-	}
+	void lookAt(const glm::vec3 &target);
 
 	glm::mat4 getView() const
 	{
