@@ -2,11 +2,12 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "OBJ\tiny_obj_loader.h"
 #include "Vertex.h"
+#include "input.h"
 #include "crenderutils.h"
 
 #include <cstdio>
 
-Geometry makeGeometry(const Vertex       * verts, size_t vsize,
+Geometry makeGeometry(const Vertex * verts, size_t vsize,
 	const unsigned int * tris, size_t tsize)
 {
 	Geometry retval;
@@ -120,6 +121,34 @@ void draw(const Shader & shady, const Geometry & geo, const float M[16], const f
 	glUniformMatrix4fv(2, 1, GL_FALSE, M);
 
 	glUniform1f(3, time);
+
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
+
+void draw(const Shader & shady, const Geometry & geo, 
+	const float M[16], const float V[16], const float P[16], float time, const Input &in)
+{
+	glEnable(GL_CULL_FACE); 
+	glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glUseProgram(shady.handle);
+	glBindVertexArray(geo.vao);
+
+	glUniformMatrix4fv(0, 1, GL_FALSE, P);
+	glUniformMatrix4fv(1, 1, GL_FALSE, V);
+	glUniformMatrix4fv(2, 1, GL_FALSE, M);
+
+	glUniform1f(3, time);
+
+	for (int i = 0; i < 350; ++i)
+	{
+		if (in.getKeyState(i) == Input::DOWN)
+		{
+			glUniform1i(4, i);
+		}
+	}
+
 
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }

@@ -9,7 +9,7 @@ layout(location = 0) uniform mat4 Projection;
 layout(location = 1) uniform mat4 View;		
 layout(location = 2) uniform mat4 Model;
 layout(location = 3) uniform float time = 0.0f;
-
+layout(location = 4) uniform int toggle = -1;
 
 void main ()
 { 
@@ -22,8 +22,14 @@ void main ()
 
 
 	outColor.r = (cos(time*1.3 + cPos.x)+1)/2;
-	outColor.g = (sin(time*1.3 + cPos.y)+1)/2;
-
+	if(toggle != -1)
+	{
+		outColor.g = ((sin(time*1.3 + cPos.y)+1)/2) * cos(toggle);
+	}
+	else
+	{
+		outColor.g = (sin(time*1.3 + cPos.y)+1)/2;
+	}
 	outColor.b = vPosition.x;
 
 	float rad = sqrt(cPos.x*cPos.x + cPos.y*cPos.y);

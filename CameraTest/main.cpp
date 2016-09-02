@@ -85,7 +85,7 @@ int main()
 		draw(gallery.getShader("CAMERA"), gallery.getObject("cube"),
 			glm::value_ptr(model),
 			glm::value_ptr(view),
-			glm::value_ptr(proj), dt);
+			glm::value_ptr(proj), dt, input);
 
 		draw(gallery.getShader("CAMERA"), gallery.getObject("quad"),
 			glm::value_ptr(model3),
