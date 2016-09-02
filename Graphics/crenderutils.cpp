@@ -4,7 +4,6 @@
 #include "Vertex.h"
 #include "input.h"
 #include "crenderutils.h"
-
 #include <cstdio>
 
 Geometry makeGeometry(const Vertex * verts, size_t vsize,
@@ -237,6 +236,44 @@ Shader loadShader(const char *vpath, const char *fpath)
 	return makeShader(vs.c_str(), fs.c_str());
 }
 
+Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned * pixels)
+{
+	Texture retval = { 0,width,height,format };
+
+	glGenTextures(1, &retval.handle);	//declaration
+	glBindTexture(GL_TEXTURE_2D, retval.handle);	//scoping
+
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return retval;
+}
+void draw(const Shader & shady, const Geometry & geo, Texture & t, 
+	const float M[16], const float V[16], const float P[16], float time)
+{
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glUseProgram(shady.handle);
+	glBindVertexArray(geo.vao);
+
+	glUniformMatrix4fv(0, 1, GL_FALSE, P);
+	glUniformMatrix4fv(1, 1, GL_FALSE, V);
+	glUniformMatrix4fv(2, 1, GL_FALSE, M);
+
+	glUniform1f(3, time);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t.handle);
+	glUniform1i(4, 0);
+
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
 //mine that doesnt work
 
 //#include "gldecs.h"

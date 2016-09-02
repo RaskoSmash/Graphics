@@ -10,6 +10,8 @@
 #include "timer.h"
 #include "input.h"
 #include "camera.h"
+
+
 int main()
 {
 
@@ -24,6 +26,10 @@ int main()
 	input.init(window);
 	time.init();
 
+
+	unsigned int pixels[] {255,255,0};
+	Texture tex = makeTexture(1, 1, 0x1907, pixels);
+	
 	Vertex verts[] = { { 1,1,0,1 },{ 1,-1,0,1 },{ -1,-1,0,1 },{ -1,1,0,1 } };
 
 	unsigned tris[] = { 0,1,2, 2,3,0 };
@@ -31,6 +37,9 @@ int main()
 
 	gallery.loadShader("CAMERA", "../res/shaders/cameraVert.txt",
 		"../res/shaders/cameraFrag.txt");
+
+	gallery.loadShader("TEXTURE", "../res/shaders/textureVert.txt",
+		"../res/shaders/textureFrag.txt");
 
 	gallery.makeObject("quad", verts, 4, tris, 6);
 	gallery.loadObjectOBJ("sphere", "../res/models/sphere.obj");
@@ -87,7 +96,7 @@ int main()
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt, input);
 
-		draw(gallery.getShader("CAMERA"), gallery.getObject("quad"),
+		draw(gallery.getShader("TEXTURE"), gallery.getObject("quad"), tex,
 			glm::value_ptr(model3),
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt);
