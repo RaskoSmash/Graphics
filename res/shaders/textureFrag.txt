@@ -15,7 +15,8 @@ layout(location = 4) uniform sampler2D texMap;
 
 void main ()
 { 
-
+	outColor = texture(texMap, vPosition.xy);
+	/*
 	//outColor = vColor;
 	//outColor.r = (cos(time + vPosition.x * 10) + 1.0)/ 2.0;
 
@@ -40,5 +41,5 @@ void main ()
 	}
 
 	//outColor = vPosition;
-	
+	*/
 }

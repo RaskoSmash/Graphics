@@ -1,10 +1,15 @@
 #include "gldecs.h"
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "OBJ\tiny_obj_loader.h"
 #include "Vertex.h"
 #include "input.h"
 #include "crenderutils.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "STB\stb_image.h"
 #include <cstdio>
+#include "GLM\gtc\noise.hpp"
 
 Geometry makeGeometry(const Vertex * verts, size_t vsize,
 	const unsigned int * tris, size_t tsize)
@@ -236,7 +241,7 @@ Shader loadShader(const char *vpath, const char *fpath)
 	return makeShader(vs.c_str(), fs.c_str());
 }
 
-Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned * pixels)
+Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned char *pixels)
 {
 	Texture retval = { 0,width,height,format };
 
@@ -252,7 +257,42 @@ Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsi
 
 	return retval;
 }
-void draw(const Shader & shady, const Geometry & geo, Texture & t, 
+Texture loadTexture(const char *path)
+{
+	int w, h, f;
+	unsigned char *p;
+
+	Texture retval = {0,0,0,0};
+
+	p = stbi_load(path, &w, &h, &f, STBI_default);
+	if(!p) return retval;
+
+	switch (f)
+	{
+	case STBI_grey:
+		f = GL_RED;
+		break;
+	case STBI_grey_alpha:
+		f = GL_RG;
+		break;
+	case STBI_rgb:
+		f = GL_RGB;
+		break;
+	case STBI_rgb_alpha:
+		f = GL_RGBA;
+		break;
+	}
+
+	retval = makeTexture(w, h, f, p);
+	stbi_image_free(p);
+	return retval;
+}
+void freeTexture(Texture &t)
+{
+	glDeleteTextures(1, &t.handle);
+	t = {0,0,0,0};
+}
+void draw(const Shader & shady, const Geometry & geo, const Texture & t, 
 	const float M[16], const float V[16], const float P[16], float time)
 {
 	glEnable(GL_CULL_FACE);
@@ -273,6 +313,57 @@ void draw(const Shader & shady, const Geometry & geo, Texture & t,
 	glUniform1i(4, 0);
 
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
+}
+
+Geometry generateGrid(unsigned int rows, unsigned int cols)
+{
+	Geometry retval;
+	Vertex *aoVertices = new Vertex[rows * cols];
+
+	for(unsigned int r = 0; r < rows; ++r)
+		for (unsigned int c = 0; c < cols; ++c)
+		{
+			float vec4[] = { (float)c,0,(float)r,1 };
+			memcpy_s(&aoVertices[r * cols + c], sizeof(float) * 4, &vec4, sizeof(float) * 4);
+			//aoVertices[r * cols + c].position[0] = vec4[0];
+			//aoVertices[r * cols + c].position[1] = vec4[1];
+			//aoVertices[r * cols + c].position[2] = vec4[2];
+			//aoVertices[r * cols + c].position[3] = vec4[3];
+		}
+
+	unsigned int *auiIndices = new unsigned int[(rows - 1) * (cols - 1) * 6];
+	unsigned int index = 0;
+
+	for(unsigned int r = 0; r < (rows - 1); ++r)
+		for (unsigned int c = 0; c < (cols - 1); ++c)
+		{
+			//triangle 1
+			auiIndices[index++] = r * cols + c;
+			auiIndices[index++] = (r + 1) * cols + c;
+			auiIndices[index++] = (r + 1) * cols + (c + 1);
+
+			//triangle 2
+			auiIndices[index++] = r * cols + c;
+			auiIndices[index++] = (r + 1) * cols + (c + 1);
+			auiIndices[index++] = r * cols + (c + 1);
+		}
+
+	retval = makeGeometry(aoVertices, rows * cols, auiIndices, (rows - 1) * (cols - 1) * 6);
+
+	delete[] auiIndices;
+	delete[] aoVertices;
+	return retval;
+}
+
+Texture generateHeightMap(int dims)
+{
+	float *perlin_data = new float[dims * dims];
+	float scale = (1.0f / dims) * 3;
+	for(int x = 0; x < dims; ++x)
+		for (int y = 0; y < dims; ++y)
+		{
+			perlin_data[y* dims + x] = glm::perlin(glm::vec2(x, y) * scale) * 0.5f + 0.5f;
+		}
 }
 //mine that doesnt work
 

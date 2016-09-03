@@ -25,6 +25,18 @@ bool Gallery::loadObjectOBJ(const char * name, const char * path)
 	return true;
 }
 
+bool Gallery::makeTexture(const char *name, unsigned w, unsigned h, unsigned f, const unsigned char * p)
+{
+	textures[name] = ::makeTexture(w, h, f, p);
+	return true;
+}
+
+bool Gallery::loadTexture(const char * name, const char * path)
+{
+	textures[name] = ::loadTexture(path);
+	return true;
+}
+
 const Geometry & Gallery::getObject(const char * name)
 {
 	return objects[name];
@@ -34,6 +46,11 @@ const Shader & Gallery::getShader(const char * name)
 {
 	// need to validate name first
 	return shaders[name];
+}
+
+const Texture & Gallery::getTexture(const char * name)
+{
+	return textures[name];
 }
 
 bool Gallery::init()
@@ -54,6 +71,10 @@ bool Gallery::term()
 	for each (auto object in objects)
 	{
 		freeGeometry(object.second);
+	}
+	for each (auto texture in textures)
+	{
+		freeTexture(texture.second);
 	}
 	return true;
 }

@@ -9,6 +9,9 @@ class FlyCamera
 	//near has to be > 0
 	float aspect, fov, near, far;
 
+	glm::mat4 transform;
+
+	//yaw rotation along Y, pitch rotation along X
 	float pitch, yaw, roll;
 public:
 	FlyCamera(float  a_aspect  = 16.f/9.f, float a_fov = 45.f, float near = 1.f,float far = 100.f)

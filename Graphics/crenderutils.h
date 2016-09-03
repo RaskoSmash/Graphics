@@ -32,9 +32,14 @@ std::string cppStyleFileToString(const char *path);
 
 Geometry loadObj(const char *path);
 
-Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned *pixels);
-
+Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned char *pixels);
+Texture loadTexture(const char *path);
 void freeTexture(Texture &);
 
-void draw(const Shader &shady, const Geometry &geo, Texture &t,
+
+void draw(const Shader &shady, const Geometry &geo, const Texture &t,
 	const float M[16], const float V[16], const float P[16], float time);
+
+Geometry generateGrid(unsigned int rows, unsigned int cols);
+
+Texture generateHeightMap(int dims);

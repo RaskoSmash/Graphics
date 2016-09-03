@@ -27,8 +27,12 @@ int main()
 	time.init();
 
 
-	unsigned int pixels[] {255,255,0};
-	Texture tex = makeTexture(1, 1, 0x1907, pixels);
+	Geometry geo = generateGrid(50,50);
+
+	unsigned char pixels[] {255,255,0};
+	//Texture tex = makeTexture(1, 1, 0x1907, pixels);
+
+	gallery.loadTexture("WOOD","../res/textures/text123456.jpg");
 	
 	Vertex verts[] = { { 1,1,0,1 },{ 1,-1,0,1 },{ -1,-1,0,1 },{ -1,1,0,1 } };
 
@@ -42,7 +46,7 @@ int main()
 		"../res/shaders/textureFrag.txt");
 
 	gallery.makeObject("quad", verts, 4, tris, 6);
-	gallery.loadObjectOBJ("sphere", "../res/models/sphere.obj");
+	//gallery.loadObjectOBJ("sphere", "../res/models/sphere.obj");
 
 	gallery.loadObjectOBJ("cube", "../res/models/cube.obj");
 
@@ -52,8 +56,6 @@ int main()
 		0,0,0,1 };
 
 	glm::mat4 proj, view, model, model2, model3;
-
-
 	//proj = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
 
 	proj = glm::perspective(45.f, 1.f, 1.f, 50.f);
@@ -96,10 +98,15 @@ int main()
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt, input);
 
-		draw(gallery.getShader("TEXTURE"), gallery.getObject("quad"), tex,
+		draw(gallery.getShader("TEXTURE"), /*gallery.getObject("quad")*/ geo, gallery.getTexture("WOOD"),
 			glm::value_ptr(model3),
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt);
+
+		/*draw(gallery.getShader("TEXTURE"), gallery.getObject("quad"), gallery.getTexture("WOOD"),
+			glm::value_ptr(model3),
+			glm::value_ptr(view),
+			glm::value_ptr(proj), dt);*/
 	}
 
 	input.term();
