@@ -341,7 +341,7 @@ void draw(const Shader & shady, const Geometry & geo, const Texture & t,
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 
-//my old one
+//my old ones
 Geometry generateGrid(unsigned int rows, unsigned int cols)
 {
 	Geometry retval;
