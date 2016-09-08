@@ -32,7 +32,9 @@ std::string cppStyleFileToString(const char *path);
 
 Geometry loadObj(const char *path);
 
-Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned char *pixels);
+Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned char *pixels);	//makes an image
+Texture makeTextureF(unsigned sqr, const float *pixels);	//for pure data
+
 Texture loadTexture(const char *path);
 void freeTexture(Texture &);
 

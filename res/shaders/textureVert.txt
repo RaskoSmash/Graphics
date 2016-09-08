@@ -1,20 +1,23 @@
 #version 450
 
+
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 color;
+layout(location = 3) in vec2 texcoord;
 
-out vec4 vColor;
-out vec4 vPosition;
-
-layout(location = 0) uniform mat4 Projection;
-layout(location = 1) uniform mat4 View;
+layout(location = 0) uniform mat4 Projection;	
+layout(location = 1) uniform mat4 View;		
 layout(location = 2) uniform mat4 Model;
+layout(location = 4) uniform sampler2D texMap;
+
+out vec2 vtexCoord;
 
 void main()
 {
-	vColor = color;
-	vPosition = position;
+	vtexCoord = texcoord;
 
-	gl_Position = Projection * View * Model * position; 
-	
+	vec4 p = position;
+
+	p.y = texture(texMap, texcoord).r;
+
+	gl_Position = Projection * View * Model * p;
 }

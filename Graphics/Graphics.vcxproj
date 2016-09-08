@@ -131,6 +131,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Gallery.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="procgen.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="gldecs.h" />
     <ClInclude Include="globjects.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="procgen.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="window.h" />

@@ -1,16 +1,18 @@
 #pragma once
-
+#include "GLM\glm.hpp"
 struct Vertex
 {
-	float position[4];
-	float color[4];
-	//float normal[4];
+	glm::vec4 position;
+	glm::vec4 color;
+	glm::vec4 normal;
 	//float tangent[4];
 	//float binormal[4];
-	//float texCord[4];
+	glm::vec2 texcoord;
 	enum
 	{
 		POSITION = 0,
-		COLOR = 16
+		COLOR = 16,
+		NORMAL = 32,
+		TEXCOORD = 48
 	};
 };

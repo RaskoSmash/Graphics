@@ -10,7 +10,7 @@
 #include "timer.h"
 #include "input.h"
 #include "camera.h"
-
+#include "procgen.h"
 
 int main()
 {
@@ -27,16 +27,17 @@ int main()
 	time.init();
 
 
-	Geometry geo = generateGrid(50,50);
+	Geometry geo = genGrid(50,2);
+	Texture texturr = genNoise(64,16);
 
 	unsigned char pixels[] {255,255,0};
 	//Texture tex = makeTexture(1, 1, 0x1907, pixels);
 
 	gallery.loadTexture("WOOD","../res/textures/text123456.jpg");
 	
-	Vertex verts[] = { { 1,1,0,1 },{ 1,-1,0,1 },{ -1,-1,0,1 },{ -1,1,0,1 } };
+//	Vertex verts[] = { { 1,1,0,1 },{ 1,-1,0,1 },{ -1,-1,0,1 },{ -1,1,0,1 } };
 
-	unsigned tris[] = { 0,1,2, 2,3,0 };
+//	unsigned tris[] = { 0,1,2, 2,3,0 };
 
 
 	gallery.loadShader("CAMERA", "../res/shaders/cameraVert.txt",
@@ -45,8 +46,8 @@ int main()
 	gallery.loadShader("TEXTURE", "../res/shaders/textureVert.txt",
 		"../res/shaders/textureFrag.txt");
 
-	gallery.makeObject("quad", verts, 4, tris, 6);
-	//gallery.loadObjectOBJ("sphere", "../res/models/sphere.obj");
+//	gallery.makeObject("quad", verts, 4, tris, 6);
+	gallery.loadObjectOBJ("sphere", "../res/models/sphere.obj");
 
 	gallery.loadObjectOBJ("cube", "../res/models/cube.obj");
 
@@ -98,10 +99,15 @@ int main()
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt, input);
 
-		draw(gallery.getShader("TEXTURE"), /*gallery.getObject("quad")*/ geo, gallery.getTexture("WOOD"),
+		draw(gallery.getShader("TEXTURE"), geo, texturr,
 			glm::value_ptr(model3),
 			glm::value_ptr(view),
 			glm::value_ptr(proj), dt);
+
+		//draw(gallery.getShader("TEXTURE"), /*gallery.getObject("quad")*/ geo, gallery.getTexture("WOOD"),
+		//	glm::value_ptr(model3),
+		//	glm::value_ptr(view),
+		//	glm::value_ptr(proj), dt);
 
 		/*draw(gallery.getShader("TEXTURE"), gallery.getObject("quad"), gallery.getTexture("WOOD"),
 			glm::value_ptr(model3),
