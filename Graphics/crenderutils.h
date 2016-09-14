@@ -48,3 +48,7 @@ Texture generateHeightMap(int dims);
 
 void drawPhong(const Shader & shady, const Geometry & geo,
 	const float M[16], const float V[16], const float P[16]);
+
+void drawPhong(const Shader & shady, const Geometry & geo,
+	const float M[16], const float V[16], const float P[16],
+	const Texture *T, unsigned t_count);

@@ -423,6 +423,29 @@ void drawPhong(const Shader & shady, const Geometry & geo, const float M[16], co
 
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
+
+void drawPhong(const Shader &s, const Geometry &g,
+	const float M[16], const float V[16], const float P[16],
+	const Texture *T, unsigned t_count)
+{
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(s.handle);
+	glBindVertexArray(g.vao);
+
+	glUniformMatrix4fv(0, 1, GL_FALSE, P);
+	glUniformMatrix4fv(1, 1, GL_FALSE, V);
+	glUniformMatrix4fv(2, 1, GL_FALSE, M);
+
+	for (int i = 0; i < t_count; ++i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, T[i].handle);
+		glUniform1i(3 + i, 0 + i);
+	}
+	glDrawElements(GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0);
+}
 //mine that doesnt work
 
 //#include "gldecs.h"
