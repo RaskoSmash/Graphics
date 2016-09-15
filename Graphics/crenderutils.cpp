@@ -295,6 +295,7 @@ Texture loadTexture(const char *path)
 
 	Texture retval = {0,0,0,0};
 
+	stbi_set_flip_vertically_on_load(true);
 	p = stbi_load(path, &w, &h, &f, STBI_default);
 	if(!p) return retval;
 
@@ -445,6 +446,33 @@ void drawPhong(const Shader &s, const Geometry &g,
 		glUniform1i(3 + i, 0 + i);
 	}
 	glDrawElements(GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0);
+}
+FrameBuffer makeFrameBuffer(unsigned w, unsigned h, unsigned nColors)
+{
+	FrameBuffer retval = {0,w,h,0,0,0,0,0,0,0,0};
+
+	glGenFramebuffers(1, &retval.handle);
+	glBindFramebuffer(GL_FRAMEBUFFER, retval.handle);
+
+	const GLenum attachments[8] = 
+	{
+		GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,
+		GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4,GL_COLOR_ATTACHMENT5,
+		GL_COLOR_ATTACHMENT6,GL_COLOR_ATTACHMENT7 };
+
+	for (int i = 0; i < nColors && i < 8; ++i)
+	{
+		retval.colors[i] = makeTexture(w, h, GL_RGBA, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachments[i], 
+								retval.colors[i].handle, 0);
+	}
+
+	glDrawBuffers(nColors, attachments);
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	return retval;
+}
+void freeFrameBuffer(FrameBuffer &)
+{
 }
 //mine that doesnt work
 

@@ -17,3 +17,10 @@ struct Texture
 {
 	unsigned handle, width, height, format;
 };
+
+struct FrameBuffer
+{
+	unsigned handle;
+	unsigned width, height;
+	Texture colors[8];
+};

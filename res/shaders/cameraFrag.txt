@@ -1,44 +1,76 @@
 #version 430
 
+out vec4 outColor;
 
-in  vec4  vPosition;
-in  vec4  vColor;
-out vec4  outColor;
+in vec4 vNormal;
+in vec4 vPosition;
+in vec2 UV;
 
-layout(location = 0) uniform mat4 Projection;	
-layout(location = 1) uniform mat4 View;		
-layout(location = 2) uniform mat4 Model;
-layout(location = 3) uniform float time = 0.0f;
-layout(location = 4) uniform int toggle = -1;
+in mat4 TBN;
 
-void main ()
-{ 
-	//outColor = vColor;
-	//outColor.r = (cos(time + vPosition.x * 10) + 1.0)/ 2.0;
+layout(location = 0)uniform mat4 proj;
+layout(location = 1)uniform mat4 view;
 
-	outColor = vPosition;
+layout(location = 3)uniform sampler2D diffuseMap;
+layout(location = 4)uniform sampler2D specularMap;
+layout(location = 5)uniform sampler2D normalMap;
 
-	vec4 cPos = vPosition;
+layout(location = 6) uniform int toggle;
 
-
-	outColor.r = (cos(time*1.3 + cPos.x)+1)/2;
-	if(toggle != -1)
-	{
-		outColor.g = ((sin(time*1.3 + cPos.y)+1)/2) * cos(toggle);
-	}
-	else
-	{
-		outColor.g = (sin(time*1.3 + cPos.y)+1)/2;
-	}
-	outColor.b = vPosition.x;
-
-	float rad = sqrt(cPos.x*cPos.x + cPos.y*cPos.y);
+in vec4 eyeview;
 
 
-	if(rad < (cos(time)+2)/2 &&  rad > (cos(time)+2)/4)
-	{
-	outColor  = vec4(1,1,1,1) - (sin(time*1.3 + cPos.y)+1)/2;
-	}
+vec4 cross4(in vec4 a, in vec4 b) { return vec4(cross(a.xyz,b.xyz),0); }
 
-	//outColor = vPosition;
+
+mat4 cotangent_frame(in vec4 N, in vec4 p, in vec2 uv );
+
+uniform vec4 lDir = normalize(vec4(1,0,-1,0));
+
+void main()
+{
+	vec4 pp = proj * view * vPosition;
+
+	float sP = 8;
+
+	mat4 TBN = cotangent_frame(vNormal, vPosition, UV);
+	vec4 N   = TBN * (texture(normalMap, UV) * 2 - 1);
+
+
+	vec4  R = -reflect(lDir, N);
+	vec4  V = normalize(eyeview);
+
+	float spec = dot(R, V);
+	
+	if(spec > 0)
+		spec = pow(spec, sP);
+	else spec = 0;
+
+	float lamb = max(0,-dot(N, lDir));
+
+	vec4 diffuse  = lamb * texture( diffuseMap, UV);
+	vec4 specular = spec * texture(specularMap, UV);
+
+	outColor = N;
+}
+
+
+
+
+
+mat4 cotangent_frame(in vec4 N, in vec4 p, in vec2 uv )
+{
+    vec4 dp1  = dFdx( p );
+    vec4 dp2  = dFdy( p );
+    vec2 duv1 = dFdx( uv );
+    vec2 duv2 = dFdy( uv );
+ 
+    vec4 dp2perp = cross4( dp2, N );
+    vec4 dp1perp = cross4( N, dp1 );
+ 
+    vec4 T = dp2perp * duv1.x + dp1perp * duv2.x;
+    vec4 B = dp2perp * duv1.y + dp1perp * duv2.y;
+ 
+    float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
+    return mat4( T, B, N, vec4(0,0,0,1) );
 }
