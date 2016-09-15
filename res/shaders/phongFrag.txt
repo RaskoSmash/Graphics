@@ -2,8 +2,8 @@
 
 out vec4 outColor;
 
-in vec4 vNormal;
-in vec4 vPosition;
+in vec3 vNormal;
+in vec3 vPosition;
 in vec2 UV;
 
 layout(location = 0)uniform mat4 proj;
@@ -12,41 +12,31 @@ layout(location = 3)uniform sampler2D diffuseMap;
 layout(location = 4)uniform sampler2D specularMap;
 layout(location = 5)uniform sampler2D normalMap;
 
+mat3 cotangent_frame(in vec3 n, in vec3 p, in vec2 uv);
 
 void main()
 {
-	vec4 lDir = normalize(vec4(-1,-1,-1,0));
-	vec4 camPos = inverse(view)[3];
-	float specPower = 8.f;
-
-	vec4 la = vec4(0.2f, 0.2f,0.2f,1.f),
-	     ld = vec4(1,1,1,1),
-             ls = vec4(1,1,1,1); 
-
-	vec4 sa = vec4(.1f,.1f,.1f,1.f),
-	     sd = texture(diffuseMap,  UV),
-             ss = texture(specularMap, UV);
-
+	mat3 TBN = cotangent_frame(vNormal, vPosition, UV);
+	vec3 tNormal = 2 * texture(normalMap, UV).xyz - 1;
 	
-	vec4 PP = proj * view * vPosition;		
+	vec3 N = TBN * tNormal;
+	outColor = vec4(N,1);
+}
 
-	if(PP.x < 0)
-	{
-		ss = vec4(1,1,1,1);
-		sd = texture(normalMap, UV);
-	}
+mat3 cotangent_frame(in vec3 n, in vec3 p, in vec2 uv)
+{
+	vec3 dp1 = dFdx(p);
+	vec3 dp2 = dFdy(p);
+	vec3 duv1 = dFdx(uv);
+	vec3 duv2 = dFdy(uv);
 
-	vec4 R = reflect(lDir, vNormal); 	// light reflection
-	vec4 E = normalize(camPos - vPosition); // eye direction
+	vec3 dp2perp = cross(dp2,n);
+	vec3 dp1perp = cross(n,dp1);
 
+	vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+	vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
 
-	float lamb = max(0.0f, -dot(vNormal, lDir)); //clamp between 0-1
-	
-	float spec = pow(max(0.0f, dot(R,E)), specPower);
+	float invmax = inversesqrt(max(dot(T,T),dot(B,B)));
 
-	vec4 ambient  = la * sa;
-	vec4 diffuse  = ld * lamb * sd;
-	vec4 specular = ls * spec * ss;
-	
-	outColor = ambient + diffuse + specular;	
+	return mat3(T * invmax, B * invmax, n);
 }
