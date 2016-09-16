@@ -40,7 +40,7 @@ Geometry makeGeometry(const Vertex * verts, size_t vsize,
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::POSITION);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::COLOR);
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::NORMAL);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::TEXCOORD);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::TEXCOORD);
 
 	// unscope the variables
 	glBindVertexArray(0);
@@ -425,15 +425,15 @@ void drawPhong(const Shader & shady, const Geometry & geo, const float M[16], co
 	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 
-void drawPhong(const Shader &s, const Geometry &g,
+void drawPhong(const Shader &shady, const Geometry &geo,
 	const float M[16], const float V[16], const float P[16],
 	const Texture *T, unsigned t_count)
 {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
-	glUseProgram(s.handle);
-	glBindVertexArray(g.vao);
+	glUseProgram(shady.handle);
+	glBindVertexArray(geo.vao);
 
 	glUniformMatrix4fv(0, 1, GL_FALSE, P);
 	glUniformMatrix4fv(1, 1, GL_FALSE, V);
@@ -445,14 +445,17 @@ void drawPhong(const Shader &s, const Geometry &g,
 		glBindTexture(GL_TEXTURE_2D, T[i].handle);
 		glUniform1i(3 + i, 0 + i);
 	}
-	glDrawElements(GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 FrameBuffer makeFrameBuffer(unsigned w, unsigned h, unsigned nColors)
 {
-	FrameBuffer retval = {0,w,h,0,0,0,0,0,0,0,0};
+	FrameBuffer retval = {0,w,h,nColors};
 
 	glGenFramebuffers(1, &retval.handle);
 	glBindFramebuffer(GL_FRAMEBUFFER, retval.handle);
+
+	retval.depth = makeTexture(w, h, GL_DEPTH_COMPONENT, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, retval.depth.handle, 0);
 
 	const GLenum attachments[8] = 
 	{
@@ -471,8 +474,44 @@ FrameBuffer makeFrameBuffer(unsigned w, unsigned h, unsigned nColors)
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	return retval;
 }
-void freeFrameBuffer(FrameBuffer &)
+void freeFrameBuffer(FrameBuffer &f)
 {
+	for (int i = 0; i < f.nColors; ++i)
+	{
+		freeTexture(f.colors[i]);
+	}
+	glDeleteFramebuffers(1, &f.handle);
+	f = { 0,0,0,0 };
+}
+
+void clearFrameBuffer(const FrameBuffer &f)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, f.handle);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void drawFB(const Shader & shady, const Geometry & geo, FrameBuffer & fb, const float M[16], const float V[16], const float P[16], const Texture * T, unsigned t_count)
+{
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fb.handle);
+	glUseProgram(shady.handle);
+	glBindVertexArray(geo.vao);
+
+	glViewport(0, 0, fb.width, fb.height);
+
+	glUniformMatrix4fv(0, 1, GL_FALSE, P);
+	glUniformMatrix4fv(1, 1, GL_FALSE, V);
+	glUniformMatrix4fv(2, 1, GL_FALSE, M);
+
+	for (int i = 0; i < t_count; ++i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, T[i].handle);
+		glUniform1i(3 + i, 0 + i);
+	}
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
 //mine that doesnt work
 

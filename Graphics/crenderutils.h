@@ -56,3 +56,9 @@ void drawPhong(const Shader & shady, const Geometry & geo,
 FrameBuffer makeFrameBuffer(unsigned w,unsigned h, unsigned nColors);
 
 void freeFrameBuffer(FrameBuffer &);
+
+void clearFrameBuffer(const FrameBuffer &);
+
+void drawFB(const Shader & shady, const Geometry & geo, FrameBuffer &fb,
+	const float M[16], const float V[16], const float P[16],
+	const Texture *T, unsigned t_count);
