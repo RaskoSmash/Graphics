@@ -50,6 +50,7 @@ Geometry makeGeometry(const Vertex * verts, size_t vsize,
 	return retval;
 }
 
+
 void freeGeometry(Geometry &geo)
 {
 	glDeleteBuffers(1, &geo.vbo);
@@ -68,9 +69,14 @@ Shader makeShader(const char * vsource, const char * fsource)
 	// initialize our variables
 	glShaderSource(vs, 1, &vsource, 0);
 	glShaderSource(fs, 1, &fsource, 0);
+
+	//debug shaders before compiling
+	glog_glCompileShader(vs);
+	glog_glCompileShader(fs);
 	// compile the shaders
 	glCompileShader(vs);
 	glCompileShader(fs);
+
 	// link the shaders into a single program
 	glAttachShader(retval.handle, vs);
 	glAttachShader(retval.handle, fs);
@@ -182,6 +188,7 @@ long copyFileToArray(char *dest, size_t dlen, const char *path)
 #include <fstream>
 #include <istream>
 #include <string>
+//#include "glmake.h"
 
 // not quite working!
 std::string cppStyleFileToString(const char *path)
@@ -290,6 +297,8 @@ Texture makeTextureF(unsigned sqr, const float *pixels)
 
 Texture loadTexture(const char *path)
 {
+	glog("loading texture", path);
+
 	int w, h, f;
 	unsigned char *p;
 

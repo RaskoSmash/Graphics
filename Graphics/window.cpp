@@ -11,7 +11,7 @@ void APIENTRY GL_errorCallback(GLenum source, GLenum type, GLuint id, GLenum sev
 
 	if (severity == GL_DEBUG_SEVERITY_HIGH)
 	{
-		abort();
+		system("pause");
 	}
 }
 #endif

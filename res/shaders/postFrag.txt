@@ -15,7 +15,8 @@ uniform vec2 sDim = vec2(1280,720);
 void main()
 { 
 	
-	vec4 tempColor = vec4(0,0,0,0);
+	vec4 tempColor1 = vec4(0,0,0,0);
+	vec4 tempColor2 = vec4(0,0,0,0);
 
 	vec4 yColor = 
 	texture(specularColor,UV + vec2( 1, -1)/sDim)   +
@@ -50,7 +51,7 @@ void main()
 	texture(diffuseColor,UV + vec2( 1,  1)/sDim);
 
 
-	/*
+	
 	vec2 sTexelSize = 1.0f / textureSize(specularColor, 0).xy;
 	tempColor1 = texture(specularColor, UV) * (11/3);
 	tempColor1 += texture(specularColor, UV + vec2(0, sTexelSize.y)) * (-2/3);
@@ -66,11 +67,10 @@ void main()
 	tempColor2 += texture(diffuseColor, UV + vec2(dTexelSize.x, 0)) * (-2/3);
 	tempColor2 += texture(diffuseColor, UV - vec2(dTexelSize.x, 0)) * (-2/3);
 	tempColor2.a = 1.0f;
-	outColor = sqrt(yColor * yColor + xColor * xColor) + sqrt(xColor1 * xColor1 + yColor1*yColor1) * (tempColor1 + tempColor2);*/
-
+	outColor = sqrt(yColor * yColor + xColor * xColor) + sqrt(xColor1 * xColor1 + yColor1*yColor1) * (tempColor1 + tempColor2);
 //	outColor = sqrt(yColor * yColor + xColor * xColor) + sqrt(xColor1 * xColor1 + yColor1*yColor1);
 
-	vec2 texelSize = 1.0f / textureSize(colorMap, 0).xy;
+	/*vec2 texelSize = 1.0f / textureSize(colorMap, 0).xy;
 	tempColor = texture(colorMap, UV) * (11/3);
 	for(int w = 0; w < 9; ++w)
 	{
@@ -83,5 +83,5 @@ void main()
 		tempColor += texture(colorMap - w, UV - vec2(texelSize.x, 0)) * (-2/3);
 	}
 	tempColor.a = 1.0f;
-	outColor = tempColor;
+	outColor = tempColor;*/
 }

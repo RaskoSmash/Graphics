@@ -4,7 +4,7 @@
 #include "window.h"
 #include "Input.h"
 #include "Vertex.h"
-
+#include "glmake.h"
 #include "GLM\glm.hpp"
 #include "GLM\ext.hpp"
 
