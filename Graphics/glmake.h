@@ -1,7 +1,10 @@
 #pragma once
 
-#include "globjects.h"
+struct Geometry;
+struct Texture;
+struct FrameBuffer;
 struct Vertex;
+struct Shader;
 
 Geometry makeGeometry(const Vertex *verts, size_t vsize, const unsigned * tris, size_t tsize);
 void freeGeometry(Geometry &geo);

@@ -1,10 +1,10 @@
 
 
-#include "crenderutils.h"
+#include "GLSTUFF\crenderutils.h"
 #include "window.h"
-#include "Input.h"
-#include "Vertex.h"
-#include "glmake.h"
+#include "GLSTUFF\input.h"
+#include "GLSTUFF\Vertex.h"
+#include "GLSTUFF\glmake.h"
 #include "GLM\glm.hpp"
 #include "GLM\ext.hpp"
 

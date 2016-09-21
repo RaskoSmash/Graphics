@@ -1,116 +1,38 @@
 #include "crenderutils.h"
 
-//TriangleTest\main.cpp
-#include "window.h"
-#include "vertex.h"
-#include "Gallery.h"
-int main()
+#include "GLM\ext.hpp"
+
+void main()
 {
+	Window context;
+	context.init(1280, 720);
 
-	Gallery gallery;
-	Window window;
-	window.init(600,600);
+	FrameBuffer screen = { 0,1280,720 };
 
-	//Vertex vert[3] = { { 0,  .5f,0,1, 1,0,0,1 },
-	//{ .5f, -.5f,0,1, 0,1,0,1 },
-	//{ -.5f, -.5f,0,1, 0,1,1,1 } };
-	//unsigned tris[3] = { 0,1,2 };
-	//Vertex vats[3] = { { 1,  .5f,0,1, 0,1,1,1 },
-	//{ .5f, -.5f,0,1, 0,1,0,1 },
-	//{ -.5f, -.5f,0,1, 1,0,0,1 } };
-	//unsigned trees[3] = { 1,2,0 };
-	//const char vsource[] =
-	//	"#version 330\n"
-	//	"layout(location = 0)in vec4 position;"
-	//	"layout(location = 1)in vec4 color;"
-	//	"out vec4 vColor;"
-	//	"void main() { vColor = color; gl_Position = position; } ";
-	//const char fsource[] =
-	//	"#version 150\n"
-	//	"in vec4 vColor;"
-	//	"out vec4 outColor;"
-	//	"void main () { outColor = vec4(1,0,0,1) - vColor; } ";
-	//Geometry geo3 = makeGeometry(vert, 3, tris, 3);
-	//Shader shady3 = makeShader(vsource, fsource);
-	//Geometry geo1 = loadObj("../res/models/sphere.obj");
-	//Shader shady1 = loadShader("../res/shaders/simpleVert.txt","../res/shaders/simpleFrag.txt");
-	////Geometry geo2 = makeGeometry(vats, 3, trees, 3);
-	////Shader shady2 = makeShader(vsource, fsource);
+	Geometry quad = makeGeometry(quad_verts, 4,
+		quad_tris, 6);
 
+	Shader simple = loadShader("../res/shaders/simpleVert.vert", "../res/shaders/simpleFrag.frag");
 
-	gallery.init();
+	Geometry spear = loadObj("../res/models/soulspear.obj");
 
-	float time = 0;
+	Texture spear_normal = loadTexture("../res/textures/soulspear_normal.tga");
+	Texture spear_diffuse = loadTexture("../res/textures/soulspear_diffuse.tga");
+	Texture spear_specular = loadTexture("../res/textures/soulspear_specular.tga");
 
-	while (window.step())
+	glm::mat4 model, view, proj;
+
+	model = glm::translate(glm::vec3(0, -1, 0));
+	view = glm::lookAt(glm::vec3(0, 0, 4), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	proj = glm::perspective(45.f, 1280.f / 720, 1.f, 100.f);
+
+	while (context.step())
 	{
-		//time is a uniform
-		time += 0.01666667;
-		draw(gallery.getShader("defaultShader"), gallery.getObject("sphere"), time);
-		//draw(shady2, geo2);
+		tdraw(simple, spear, screen, model, view, proj,
+			spear_diffuse, spear_normal, spear_specular);
 	}
 
-	/*freeGeometry(geo1);
-	freeShader(shady1);*/
-	gallery.term();
-	window.term();
 
-	return 0;
+	freeShader(simple);
+	context.term();
 }
-
-//before using files
-
-//#include "crenderutils.h"
-//
-////TriangleTest\main.cpp
-//#include "window.h"
-//#include "vertex.h"
-//int main()
-//{
-//
-//	Window window;
-//	window.init();
-//
-//	Vertex vert[3] = { { 0,  .5f,0,1, 1,0,0,1 },
-//					   { .5f, -.5f,0,1, 0,1,0,1 },
-//					   { -.5f, -.5f,0,1, 0,1,1,1 } };
-//	unsigned tris[3] = { 0,1,2 };
-//
-//	Vertex vats[3] = { { 1,  .5f,0,1, 0,1,1,1 },
-//					   { .5f, -.5f,0,1, 0,1,0,1 },
-//					   { -.5f, -.5f,0,1, 1,0,0,1 } };
-//
-//	unsigned trees[3] = { 1,2,0 };
-//
-//	const char vsource[] =
-//		"#version 330\n"
-//		"layout(location = 0)in vec4 position;"
-//		"layout(location = 1)in vec4 color;"
-//		"out vec4 vColor;"
-//		"void main() { vColor = color; gl_Position = position; } ";
-//
-//	const char fsource[] =
-//		"#version 150\n"
-//		"in vec4 vColor;"
-//		"out vec4 outColor;"
-//		"void main () { outColor = vec4(1,0,0,1) - vColor; } ";
-//
-//	Geometry geo1 = makeGeometry(vert, 3, tris, 3);
-//	Shader shady1 = makeShader(vsource, fsource);
-//
-//	Geometry geo2 = makeGeometry(vats, 3, trees, 3);
-//	Shader shady2 = makeShader(vsource, fsource);
-//
-//	while (window.step())
-//	{
-//		draw(shady1, geo1);
-//		draw(shady2, geo2);
-//	}
-//
-//	freeGeometry(geo1);
-//	freeShader(shady1);
-//	window.term();
-//
-//	return 0;
-//}
-

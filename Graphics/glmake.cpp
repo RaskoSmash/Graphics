@@ -1,14 +1,7 @@
 #include "gldecs.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "OBJ\tiny_obj_loader.h"
-#include "Vertex.h"
-#include "input.h"
-#include "crenderutils.h"
-
-#include "vertex.h"
-#include "gldecs.h"
 #include "glmake.h"
+#include "globjects.h"
+#include "Vertex.h"
 
 Geometry makeGeometry(const Vertex * verts, size_t vsize,
 	const unsigned int * tris, size_t tsize)
@@ -70,8 +63,8 @@ Shader makeShader(const char * vsource, const char * fsource)
 	glShaderSource(fs, 1, &fsource, 0);
 
 	//debug shaders before compiling
-	glog_glCompileShader(vs);
-	glog_glCompileShader(fs);
+//	glog_glCompileShader(vs);
+//	glog_glCompileShader(fs);
 	// compile the shaders
 	glCompileShader(vs);
 	glCompileShader(fs);
