@@ -1,24 +1,21 @@
 #version 430
 
 layout(location = 0) in vec4 position;
-layout(location = 3) in vec2 texCoord;
+layout(location = 2) in vec4 normal;
+layout(location = 3) in vec2 texcoord;
 
-out vec4 vPosition;
 out vec2 vUV;
-
+out vec3 vNormal;
+out vec3 vPosition;
 
 layout(location = 0) uniform mat4 model;
 layout(location = 1) uniform mat4 view;
 layout(location = 2) uniform mat4 proj;
 
-
-layout(location = 3) uniform sampler2D diffuseMap;
-layout(location = 4) uniform sampler2D normalMap;
-layout(location = 5) uniform sampler2D specularMap;
-
 void main()
 {
-	vPosition = position;
-	vUV = texCoord;
+	vNormal = (model * normal).xyz;
+	vPosition = (model * position).xyz;
+	vUV = texcoord;
 	gl_Position = proj * view * model * position;
 }
