@@ -10,36 +10,38 @@ void main()
 
 	Geometry quad = makeGeometry(quad_verts, 4, quad_tris, 6);
 	Geometry spear = loadObj("../res/models/soulspear.obj");
-	Geometry cube = loadObj("../res/models/cube.obj");
+	Geometry cube = loadObj("../res/models/sphere.obj");
 
 	Texture spear_normal = loadTexture("../res/textures/soulspear_normal.tga");
 	Texture spear_diffuse = loadTexture("../res/textures/soulspear_diffuse.tga");
 	Texture spear_specular = loadTexture("../res/textures/soulspear_specular.tga");
 
+	const unsigned char norm_pixels[4] = { 127, 127, 255, 255 };
+	Texture vertex_normals = makeTexture(1, 1, 4, norm_pixels);
+
+	const unsigned char white_pixels[4] = { 255, 255, 255, 255 };
+	Texture white = makeTexture(1, 1, 4, white_pixels);
 
 	Shader gpass = loadShader("../res/shaders/gpass.vert",
 		"../res/shaders/gpass.frag");
 
-	Shader lpass = loadShader("../res/shaders/lpass.vert",
-		"../res/shaders/lpass.frag", false,true);
+	Shader lpass = loadShader("../res/shaders/lPass.vert",
+		"../res/shaders/lPass.frag", false, true);
 
 	Shader post = loadShader("../res/shaders/quad.vert",
-		"../res/shaders/quad.frag",false);
+		"../res/shaders/quad.frag", false);
 
 	Shader blur = loadShader("../res/shaders/post.vert",
-		"../res/shaders/post.frag",false);
+		"../res/shaders/post.frag", false);
 
 	FrameBuffer screen = { 0, 1280, 720 };
 	FrameBuffer gframe = makeFrameBuffer(1280, 720, 4);
 	FrameBuffer lframe = makeFrameBuffer(1280, 720, 3);
 	FrameBuffer nframe = makeFrameBuffer(1280, 720, 1);
 
-	glm::mat4 model1, model2, view, proj;
+	glm::mat4 model, view, proj;
 
-	model1 = glm::translate(glm::vec3(0, -1, 0));
-
-	model2 = glm::translate(glm::vec3(1, 0, 0));
-
+	model = glm::translate(glm::vec3(0, -1, 0));
 	view = glm::lookAt(glm::vec3(0, 0, 4), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	proj = glm::perspective(45.f, 1280.f / 720, 1.f, 100.f);
 
@@ -52,27 +54,59 @@ void main()
 		clearFrameBuffer(lframe);
 		clearFrameBuffer(nframe);
 
-		model1 = glm::rotate(time, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
+		model = glm::rotate(time, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
 
-		model2 = glm::rotate(time, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(1, 0, 0));
 
+		/////////////////////////////////////////////////////
 		// Geometry Pass
-		tdraw(gpass, spear, gframe, model1, view, proj,
+		//
+		// Only the textures, geometry, and model matrix really differs
+		// from object to object.
+		tdraw(gpass, spear, gframe, model, view, proj,
 			spear_diffuse, spear_normal, spear_specular);
 
-		tdraw(gpass, cube, gframe, model2, view, proj,
-			spear_diffuse, spear_normal, spear_specular);
+		tdraw(gpass, cube, gframe, model, view, proj,
+			white, vertex_normals, white);
 
-		//blur effect
+		tdraw(gpass, quad, gframe,
+			glm::rotate(45.f, glm::vec3(0, -1, 0))*
+			glm::translate(glm::vec3(0, 0, -2)) *
+			glm::scale(glm::vec3(2, 2, 1)),
+			view, proj,
+			white, vertex_normals, white);
+
 		tdraw(blur, quad, nframe, gframe.colors[1]);
 
-		// Lighting pass
-		tdraw(lpass, quad, lframe, view, proj,
-			gframe.colors[0], nframe.colors[0],
-			gframe.colors[2], gframe.colors[3],
-			gframe.depth);
 
-		// Debug Rendering Stuff.
+		/////////////////////////////////////////////////////
+		//// Lights!
+		////
+		//// Each call is a different light
+		//// They all use the same information from the g-pass,
+		//// but provide different colors/directions.
+
+		tdraw(lpass, quad, lframe, view, proj,
+			gframe.colors[0], gframe.colors[1],
+			gframe.colors[2], gframe.colors[3],
+			gframe.depth,
+			glm::normalize(glm::vec4(1, -1, -1, 0)), glm::vec4(1, 0, 0, 1));
+
+		tdraw(lpass, quad, lframe, view, proj,
+			gframe.colors[0], gframe.colors[1],
+			gframe.colors[2], gframe.colors[3],
+			gframe.depth,
+			glm::normalize(glm::vec4(1, 1, -1, 0)), glm::vec4(0, 1, 0, 1));
+
+		tdraw(lpass, quad, lframe, view, proj,
+			gframe.colors[0], gframe.colors[1],
+			gframe.colors[2], gframe.colors[3],
+			gframe.depth,
+			glm::normalize(glm::vec4(-1, -1, 1, 0)), glm::vec4(0, 0, 1, 1));
+
+		//////////////////////////////////////////////////
+		// Debug Rendering Stuff. Just single textures to quads-
+		// drawing most of the images I've gathered so far.
+
 		for (int i = 0; i < 4; ++i)
 		{
 			glm::mat4 mod =

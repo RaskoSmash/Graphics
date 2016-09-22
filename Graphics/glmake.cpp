@@ -115,26 +115,26 @@ Texture makeTexture(unsigned width, unsigned height, unsigned channels, const un
 	return retval;
 }
 
-Texture makeTextureF(unsigned square, const float * pixels)
-{
-	glog("TODO", "DEPRECATE ME.");
-
-	Texture retval = { 0, square, square, GL_RED }; // GL_RED, GL_RG, GL_RGB, GL_RGBA
-
-	glGenTextures(1, &retval.handle);				// Declaration
-	glBindTexture(GL_TEXTURE_2D, retval.handle);    // Scoping
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, square, square, 0, GL_RED, GL_FLOAT, pixels);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return retval;
-}
+//Texture makeTextureF(unsigned square, const float * pixels)
+//{
+//	glog("TODO", "DEPRECATE ME.");
+//
+//	Texture retval = { 0, square, square, GL_RED }; // GL_RED, GL_RG, GL_RGB, GL_RGBA
+//
+//	glGenTextures(1, &retval.handle);				// Declaration
+//	glBindTexture(GL_TEXTURE_2D, retval.handle);    // Scoping
+//
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, square, square, 0, GL_RED, GL_FLOAT, pixels);
+//
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+//
+//	glBindTexture(GL_TEXTURE_2D, 0);
+//	return retval;
+//}
 
 void freeTexture(Texture &t)
 {
