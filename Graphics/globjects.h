@@ -11,6 +11,10 @@ struct Geometry
 struct Shader
 {
 	unsigned handle;
+
+	bool depthTest;
+	bool faceCulling;
+	bool additiveBlend;
 };
 
 struct Texture

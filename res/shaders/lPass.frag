@@ -18,11 +18,14 @@ uniform vec4 lDir = normalize(vec4(1,0,-1,0));
 
 void main()
 {
+	if(gl_FragCoord.z > texture(depthMap,vUV).r)
+		discard;
+
 	vec3 L = normalize((view * lDir).xyz);
 	vec3 N = normalize(texture(normalMap, vUV).xyz);
 
 	vec3 R = reflect(L, N);
-	vec3 E = normalize(texture(positionMap,vUV).xyz);
+	vec3 E = -normalize(texture(positionMap,vUV).xyz);
 	float sP = 2;
 
 	float lamb = max(0,-dot(L, N));
