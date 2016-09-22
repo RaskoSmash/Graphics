@@ -23,7 +23,7 @@ void main()
 	Texture white = makeTexture(1, 1, 4, white_pixels);
 
 	Shader gpass = loadShader("../res/shaders/gpass.vert",
-		"../res/shaders/gpass.frag");
+		"../res/shaders/gpass.frag", true, false, false);
 
 	Shader lpass = loadShader("../res/shaders/lPass.vert",
 		"../res/shaders/lPass.frag", false, true);
@@ -55,7 +55,6 @@ void main()
 		clearFrameBuffer(nframe);
 
 		model = glm::rotate(time, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
-
 
 		/////////////////////////////////////////////////////
 		// Geometry Pass
