@@ -1,75 +1,18 @@
-#include "input.h"
-#include "timer.h"
-#include "camera.h"
+#include "Input.h"
+#include "Timer.h"
+#include "Camera.h"
 
-void FlyCamera::update(const Input &in, const Timer &t, const float speed)
+void FlyCamera::lookAt(const glm::vec3 &target)
 {
-	glm::vec3 moveDir = glm::vec3(0,0,0);
-	glm::vec3 right = glm::cross(direction, glm::vec3(0, 1, 0));
-	glm::vec3 up = glm::cross(direction, right);
-	
-	yaw += in.getMouseAxisHorizontal() * t.getDeltaTime();// *150;
-	pitch += in.getMouseAxisVertical() * t.getDeltaTime();// *150;
-	
-	direction = glm::vec3(glm::rotate(yaw, glm::vec3(0, 1, 0))[2]);
-	right = glm::cross(direction, glm::vec3(0, 1, 0));
-	direction = glm::mat3(glm::rotate(pitch, right)) * direction;
-	
-	direction.x = sin(yaw);
-	direction.y = -(sinf(yaw) * cosf(pitch));
-	direction.z = -(cosf(yaw) * sinf(pitch));
-	
-	if (in.getKeyState('W') == Input::DOWN) { moveDir += direction; }
-	if (in.getKeyState('S') == Input::DOWN) { moveDir -= direction; }
-	if (in.getKeyState('A') == Input::DOWN) { moveDir -= right; }
-	if (in.getKeyState('D') == Input::DOWN) { moveDir += right; }
-	if (in.getKeyState('E') == Input::DOWN) { moveDir -= up; }
-	if (in.getKeyState('Q') == Input::DOWN) { moveDir += up; }
-	
-	if (glm::length(moveDir) >= .7f)
-	{
-		moveDir = glm::normalize(moveDir);
-		position += moveDir * t.getDeltaTime() * speed;
-	}
+	//auto mat =
+	//glm::lookAt(position, normalize(target - position), glm::vec3(0, 1, 0));
+	direction = normalize(target - position);
+
+
 }
 
-void FlyCamera::lookAt(const glm::vec3 & target)
+void FlyCamera::update(const Input &in, const Timer &t)
 {
-	direction = glm::normalize(target - position);
-}
-
-/*
-void FlyCamera::update(const Input &in, const Timer &t, const float speed)
-{
-
-//glm::vec3 moveDir = glm::vec3(0,0,0);
-//glm::vec3 right = glm::cross(direction, glm::vec3(0, 1, 0));
-//glm::vec3 up = glm::cross(direction, right);
-//
-//yaw += in.getMouseAxisHorizontal() * t.getDeltaTime();// *150;
-//pitch += in.getMouseAxisVertical() * t.getDeltaTime();// *150;
-//
-//direction = glm::vec3(glm::rotate(yaw, glm::vec3(0, 1, 0))[2]);
-//right = glm::cross(direction, glm::vec3(0, 1, 0));
-//direction = glm::mat3(glm::rotate(pitch, right)) * direction;
-//
-//direction.x = sin(yaw);
-//direction.y = -(sinf(yaw) * cosf(pitch));
-//direction.z = -(cosf(yaw) * sinf(pitch));
-//
-//if (in.getKeyState('W') == Input::DOWN) { moveDir += direction; }
-//if (in.getKeyState('S') == Input::DOWN) { moveDir -= direction; }
-//if (in.getKeyState('A') == Input::DOWN) { moveDir -= right; }
-//if (in.getKeyState('D') == Input::DOWN) { moveDir += right; }
-//if (in.getKeyState('E') == Input::DOWN) { moveDir -= up; }
-//if (in.getKeyState('Q') == Input::DOWN) { moveDir += up; }
-//
-//if (glm::length(moveDir) >= .7f)
-//{
-//moveDir = glm::normalize(moveDir);
-//position += moveDir * t.getDeltaTime() * speed;
-//}
-
 
 	yaw -= in.getMouseAxisHorizontal() / 200.f;
 	pitch -= in.getMouseAxisVertical() / 200.f;
@@ -98,4 +41,4 @@ void FlyCamera::update(const Input &in, const Timer &t, const float speed)
 		moveDir = glm::normalize(moveDir);
 		position += moveDir * t.getDeltaTime() * speed;
 	}
-}*/
+}

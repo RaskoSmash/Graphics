@@ -1,34 +1,51 @@
 #pragma once
+
 #define GLM_SWIZZLE
-#include "GLM\glm.hpp"
-#include "GLM\ext.hpp"
+#include "../dep/include/GLM/glm.hpp"
+#include "../dep/include/GLM/ext.hpp"
+
 class FlyCamera
 {
-	glm::vec3 position, direction;
+public:
+	glm::vec3 position;
+	glm::vec3 direction;
 
-	//near has to be > 0
-	float aspect, fov, near, far;
 
 	glm::mat4 transform;
 
-	//yaw rotation along Y, pitch rotation along X
+	//float azimuth, altitude;
+	// YAW is along the Y
+	// PITCH is along the X
+	// ROLL is along the Z
 	float pitch, yaw, roll;
+
+	// make sure near is > 0
+	float aspect, fov, near, far;
+
+	float speed;
+
 public:
-	FlyCamera(float  a_aspect  = 16.f/9.f, float a_fov = 45.f, float near = 1.f,float far = 100.f)
-		: aspect(a_aspect), fov(a_fov), near(near), far(far) , pitch(0), roll(0), yaw(0), direction(0,0,1){}
-
-	void update(const class Input &in, const class Timer &t, const float speed);
-
-	void jumpTo(const glm::vec3 &jump)
+	FlyCamera(float a_aspect = 16.f / 9.f, float a_fov = 45.f, float a_near = 1.f, float a_far = 100.f)
+		: aspect(a_aspect), fov(a_fov), near(a_near), far(a_far),
+		direction(0, 0, 1), speed(20), pitch(0), yaw(0), roll(0)
 	{
-		position = jump;
+
 	}
+
+	void update(const class Input &, const class Timer &);
+
 	void lookAt(const glm::vec3 &target);
 
-	glm::mat4 getView() const
+	void jumpTo(const glm::vec3 &location)
 	{
-		return glm::lookAt(position, position + direction, glm::vec3(0, 1, 0));
+		position = location;
 	}
+
+	glm::mat4 getView()		  const
+	{
+		return glm::inverse(transform);
+	}
+
 	glm::mat4 getProjection() const
 	{
 		return glm::perspective(fov, aspect, near, far);
