@@ -9,10 +9,11 @@ struct Shader;
 Geometry makeGeometry(const Vertex *verts, size_t vsize, const unsigned * tris, size_t tsize);
 void freeGeometry(Geometry &geo);
 
-Shader makeShader(const char *vsource, const char *fsource);
+Shader makeShader(const char *vsource, const char *fsource,
+	bool depth = true, bool add = false, bool face = true);
 void freeShader(Shader &shady);
 
-Texture makeTexture(unsigned width, unsigned height, unsigned format, const unsigned char *pixels);	//makes an image
+Texture makeTexture(unsigned width, unsigned height, unsigned channels, const unsigned char *pixels);	//makes an image
 Texture makeTextureF(unsigned sqr, const float *pixels);	//for pure data
 void freeTexture(Texture &);
 
