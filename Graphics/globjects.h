@@ -12,9 +12,9 @@ struct Shader
 {
 	unsigned handle;
 
-	bool depthTest;
-	bool faceCulling;
+	bool depthTest;	
 	bool additiveBlend;
+	bool faceCulling;
 };
 
 struct Texture
