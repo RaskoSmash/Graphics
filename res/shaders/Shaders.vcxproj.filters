@@ -19,7 +19,9 @@
     <None Include="quad.frag" />
     <None Include="gpass.vert" />
     <None Include="gpass.frag" />
-    <None Include="lPass.frag" />
-    <None Include="lPass.vert" />
+    <None Include="spass.vert" />
+    <None Include="spass.frag" />
+    <None Include="lspass.frag" />
+    <None Include="lspass.vert" />
   </ItemGroup>
 </Project>

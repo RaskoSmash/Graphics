@@ -112,10 +112,12 @@
   <ItemGroup>
     <None Include="gpass.frag" />
     <None Include="gpass.vert" />
-    <None Include="lPass.frag" />
-    <None Include="lPass.vert" />
+    <None Include="lspass.frag" />
+    <None Include="lspass.vert" />
     <None Include="quad.frag" />
     <None Include="quad.vert" />
+    <None Include="spass.frag" />
+    <None Include="spass.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
