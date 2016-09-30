@@ -1,13 +1,20 @@
 
 #include "crenderutils.h"
-
+#include "camera.h"
 #include "GLM\ext.hpp"
+#include "timer.h"
+#include "input.h"
+
 
 void main()
 {
 	Window context;
 	context.init(1280, 720);
-
+	FlyCamera cam;
+	Input input;
+	input.init(context);
+	Timer time;
+	time.init();
 	Geometry quad = makeGeometry(quad_verts, 4, quad_tris, 6);
 	Geometry spear = loadObj("../res/models/soulspear.obj");
 	Geometry sphere = loadObj("../res/models/sphere.obj");
@@ -47,6 +54,7 @@ void main()
 
 	// Camera information
 	glm::mat4 camView = glm::lookAt(glm::vec3(0, 0, 4), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	cam.lookAt(glm::vec3(camView[0][3], camView[1][3], camView[2][3]));
 	glm::mat4 camProj = glm::perspective(45.f, 1280.f / 720, 1.f, 100.f);
 
 	// Model Matrices
@@ -67,12 +75,20 @@ void main()
 		glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glm::vec4 greenColor = glm::vec4(0, 1, 0, 1);
 
-	float time = 0;
+	float times = 0;
 
 	while (context.step())
 	{
-		time += 0.016f;
-		spearModel = glm::rotate(time / 2, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
+		time.step();
+		input.step();
+
+		times += time.getDeltaTime();
+		camView = cam.getView();
+		camProj = cam.getProjection();
+
+		cam.update(input, time);
+
+		spearModel = glm::rotate(times, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
 
 
 		/////////////////////////////////////////////////////
@@ -128,18 +144,18 @@ void main()
 		Texture debug_list[] = { gframe.colors[0], gframe.colors[1], gframe.colors[2], gframe.colors[3],
 			gframe.depth, lframe.colors[1], lframe.colors[2], sframe.depth };
 
-		for (int i = 0; i < sizeof(debug_list) / sizeof(Texture); ++i)
+		/*for (int i = 0; i < sizeof(debug_list) / sizeof(Texture); ++i)
 		{
 			glm::mat4 mod = glm::translate(glm::vec3(-.75f + .5f*(i % 4), 0.75f - .5f*(i / 4), 0))
 				* glm::scale(glm::vec3(0.25f, 0.25f, 1.f));
 			tdraw(qdraw, quad, screen, debug_list[i], mod);
-		}
+		}*/
 
 		glm::mat4 mod =
 			glm::translate(glm::vec3(-.5f, -0.5f, 0)) *
 			glm::scale(glm::vec3(0.5f, 0.5f, 1.f));
 
-		tdraw(qdraw, quad, screen, lframe.colors[0], mod);
+		tdraw(qdraw, quad, screen, lframe.colors[0]);
 
 	}
 
