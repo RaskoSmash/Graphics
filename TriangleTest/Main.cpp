@@ -25,6 +25,7 @@ void main()
 	Texture spear_diffuse = loadTexture("../res/textures/soulspear_diffuse.tga");
 	Texture spear_specular = loadTexture("../res/textures/soulspear_specular.tga");
 
+	//TODO: FIX HEIGHTMAP GENERATION
 	Texture height = makeHeightMap(128,64);
 
 	const unsigned char norm_pixels[4] = { 127, 127, 255, 255 };
@@ -98,7 +99,7 @@ void main()
 		sphereModel *= glm::rotate(times, glm::vec3(0, 1, 0));
 		/////////////////////////////////////////////////////
 		// Geometry Pass
-		//
+		//	TODO: GLOW MAP
 		clearFrameBuffer(gframe);
 		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular);
 		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, white, height, white);
@@ -114,6 +115,7 @@ void main()
 		// RED LIGHT
 
 		// Shadow PrePass
+		// TODO: ADD VELOCITY STUFF
 		clearFrameBuffer(sframe);
 		tdraw(spass, spear, sframe, spearModel, redView, lightProj);
 		tdraw(spass, sphere, sframe, sphereModel, redView, lightProj);
