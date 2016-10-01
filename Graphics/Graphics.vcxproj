@@ -130,6 +130,7 @@
     <ClCompile Include="crenderutils.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Gallery.cpp" />
+    <ClCompile Include="generation.cpp" />
     <ClCompile Include="gldraw.cpp" />
     <ClCompile Include="glload.cpp" />
     <ClCompile Include="glmake.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="crenderutils.h" />
     <ClInclude Include="Gallery.h" />
+    <ClInclude Include="generation.h" />
     <ClInclude Include="gldecs.h" />
     <ClInclude Include="gldraw.h" />
     <ClInclude Include="glload.h" />
