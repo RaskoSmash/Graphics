@@ -26,7 +26,7 @@ void main()
 	Texture spear_specular = loadTexture("../res/textures/soulspear_specular.tga");
 
 	//TODO: FIX HEIGHTMAP GENERATION
-	Texture height = makeHeightMap(128,64);
+	Texture height = makeHeightMap(128,32);
 
 	const unsigned char norm_pixels[4] = { 127, 127, 255, 255 };
 	Texture vertex_normals = makeTexture(1, 1, 4, norm_pixels);
@@ -102,7 +102,7 @@ void main()
 		//	TODO: GLOW MAP
 		clearFrameBuffer(gframe);
 		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular);
-		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, white, height, white);
+		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, height, vertex_normals, white);
 		tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white);
 
 		//tdraw(blur, quad, nframe, gframe.colors[1]);

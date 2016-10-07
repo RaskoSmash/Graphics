@@ -2,29 +2,80 @@
 #include "crenderutils.h"
 #include "GLM\gtc\noise.hpp"
 
+float smoothNoise(int x, int y, const float *noise, const int sqr)
+{
+	//get fractional part of x and y
+	float fractX = x - int(x);
+	float fractY = y - int(y);
+
+	//wrap around
+	int x1 = (int(x) + sqr) % sqr;
+	int y1 = (int(y) + sqr) % sqr;
+
+	//neighbor values
+	int x2 = (x1 + sqr - 1) % sqr;
+	int y2 = (y1 + sqr - 1) % sqr;
+
+	//smooth the noise with bilinear interpolation
+	float value = 0.0;
+	value += fractX     * fractY     * noise[y1* sqr + x1];
+	value += (1 - fractX) * fractY     * noise[y1* sqr + x2];
+	value += fractX     * (1 - fractY) * noise[y2* sqr + x1];
+	value += (1 - fractX) * (1 - fractY) * noise[y2* sqr + x2];
+
+	return value;
+}
+
 Texture makeHeightMap(int sqr, unsigned octaves)
 {
 	Texture texturr;
 	float *noise = new float[sqr * sqr];
 	float scale = (1.0f / sqr) * 3.f;
+	for (int x = 0; x < sqr; ++x)
+	{
+		for (int y = 0; y < sqr; ++y)
+		{
+			float amplitude = 1.f;
+			float persistence = .25f;
+			noise[y* sqr + x] = glm::perlin(glm::vec2(x, y) * scale) * 0.5f + 0.5f;
+			for (int o = 0; o < octaves; ++o)
+			{
+				float freq = (rand() % 32678) / 32678.0;
+				float data = glm::perlin(glm::vec2(x, y)*scale*freq) * 0.5f + 0.5f;
+				noise[y*sqr + x] += data * amplitude;
+				amplitude *= persistence;
+			}
+		}
+	}
+
+
+	/*float *sNoise = new float[sqr * sqr];
+	memset(sNoise, 0, (sqr * sqr) * 4);*/
+	/*
 		for (int x = 0; x < sqr; ++x)
 		{
 			for (int y = 0; y < sqr; ++y)
 			{
-			float amplitude = 1.f;
-			float persistence = .25f;
-			noise[y* sqr + x] = glm::perlin(glm::vec2(x, y) * scale) * 0.5f + 0.5f;
-				for (int o = 0; o < octaves; ++o)
-				{
-					float freq = powf(2, o);
-					float data = glm::perlin(glm::vec2(x, y)*scale*freq) * 0.5f + 0.5f;
-					noise[y*sqr + x] += data * amplitude;
-					amplitude *= persistence;
-				}
+				noise[y* sqr + x] = (rand() % 32768) / 32768.0;
 			}
 		}
+
+	while (size >= 1)
+	{
+		for (int x = 0; x < sqr; ++x)
+		{
+			for (int y = 0; y < sqr; ++y)
+			{
+					sNoise[y* sqr + x] += smoothNoise(x / size, y / size, noise, sqr);
+					sNoise[y* sqr + x] /= (initSize * .25f);
+			}
+		}
+		size /= 2.0;
+	}*/
+
 	texturr = makeTexture(sqr, sqr, 0, noise, true);
 	delete[] noise;
+//	delete[] sNoise;
 	return texturr;
 
 }
