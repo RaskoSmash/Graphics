@@ -35,8 +35,8 @@ uniform mat4 clipToUV = mat4(0.5f, 0.0f, 0.0f, 0.0f,
 
 void main()
 {		 
-	vec3 L = normalize((view * lightView[2]).xyz);
-	vec3 N = normalize(texture(normalMap, vUV).xyz);
+	vec3 lightDir = normalize((view * lightView[2]).xyz);
+	vec3 normal = normalize(texture(normalMap, vUV).xyz);
 	vec4 P = texture(positionMap,vUV);
 
 	/////////////////////////////////////////////////////
@@ -54,11 +54,11 @@ void main()
 	/////////////////////////////////////////////////////
 	/////// Phong calculations
 
-	vec3 R = reflect(L, N);
+	vec3 R = reflect(lightDir, normal);
 	vec3 E = normalize(view[3].xyz + P.xyz);
 	float sP = 2;
 
-	float lamb = max(0,-dot(L, N));
+	float lamb = max(0,-dot(lightDir, normal));
 	float spec = max(0,-dot(E, R));
 	if(spec > 0)
 			spec = pow(spec, sP);

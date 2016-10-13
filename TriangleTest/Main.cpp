@@ -18,6 +18,7 @@ void main()
 	
 	//TODO: Illumination model
 
+
 	Geometry quad = makeGeometry(quad_verts, 4, quad_tris, 6);
 	Geometry spear = loadObj("../res/models/soulspear.obj");
 	Geometry sphere = loadObj("../res/models/sphere.obj");
@@ -97,7 +98,6 @@ void main()
 	float times = 0;
 	float mountScale = 0;;
 
-
 	while (context.step())
 	{
 		time.step();
@@ -120,7 +120,7 @@ void main()
 		clearFrameBuffer(glowF);
 		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular, false);
 		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, spheretex, vertex_normals, white, false);
-		//tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white, true, meleetex, mountScale);
+		tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white, false);
 		tdraw(gpass, plane, gframe, planeModel, camView, camProj, meleetex, vertex_normals, white, true, meleetex, mountScale);
 		tdraw(glowpass, quad, glowF, gframe.colors[0], 0.2f, 1.0f, 1.0f);
 
@@ -165,7 +165,6 @@ void main()
 		// note that the sframe (shadow pass) will only be from the most recent light.
 
 		tdraw(qdraw, quad, screen, pframe.colors[0]);
-
 	}
 
 	context.term();
