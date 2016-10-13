@@ -17,6 +17,12 @@ void main()
 	time.init();
 
 
+//take the texture before everything
+	//color at a UV coord, multiply by itself, rgb < texture color - threshold = black, op is white
+
+
+
+
 	Geometry quad = makeGeometry(quad_verts, 4, quad_tris, 6);
 	Geometry spear = loadObj("../res/models/soulspear.obj");
 	Geometry sphere = loadObj("../res/models/sphere.obj");
@@ -34,6 +40,7 @@ void main()
 	const unsigned char white_pixels[4] = { 255, 255, 255, 255 };
 	Texture white = makeTexture(1, 1, 4, white_pixels);
 
+	Shader glowpass = loadShader("../res/shaders/glowpass.vert", "../res/shaders/glowpass.frag");
 	Shader qdraw = loadShader("../res/shaders/quad.vert", "../res/shaders/quad.frag", false);
 	Shader gpass = loadShader("../res/shaders/gpass.vert", "../res/shaders/gpass.frag");
 
@@ -43,6 +50,7 @@ void main()
 	Shader spass = loadShader("../res/shaders/spass.vert", "../res/shaders/spass.frag", true, false, false);
 	Shader lpass = loadShader("../res/shaders/lspass.vert", "../res/shaders/lspass.frag", false, true);
 
+	FrameBuffer glowF = makeFrameBuffer(1280, 720, 3);
 
 	FrameBuffer screen = { 0, 1280, 720 };
 	FrameBuffer aster = makeFrameBuffer(720,720,1);
@@ -101,9 +109,11 @@ void main()
 		// Geometry Pass
 		//	TODO: GLOW MAP
 		clearFrameBuffer(gframe);
+		clearFrameBuffer(glowF);
 		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular);
 		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, height, vertex_normals, white);
 		tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white);
+		tdraw(glowpass, quad, glowF, gframe.colors[0], 0.2f, 1.0f, 1.0f);
 
 		//tdraw(blur, quad, nframe, gframe.colors[1]);
 
@@ -142,14 +152,9 @@ void main()
 		// Post Processing
 
 		//Bluring image's glow based on velocity
-
-		//////////////////////////////////////////////////
-		// Debug Rendering Stuff. Just single textures to quads-
-		// drawing most of the images I've gathered so far.
-
 		// note that the sframe (shadow pass) will only be from the most recent light.
 
-		tdraw(qdraw, quad, screen, lframe.colors[0]);
+		tdraw(qdraw, quad, screen, glowF.colors[0]);
 
 	}
 

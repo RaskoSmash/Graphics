@@ -23,5 +23,7 @@
     <None Include="spass.frag" />
     <None Include="lspass.frag" />
     <None Include="lspass.vert" />
+    <None Include="glowpass.vert" />
+    <None Include="glowpass.frag" />
   </ItemGroup>
 </Project>

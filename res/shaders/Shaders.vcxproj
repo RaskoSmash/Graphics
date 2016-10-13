@@ -110,6 +110,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="glowpass.frag" />
+    <None Include="glowpass.vert" />
     <None Include="gpass.frag" />
     <None Include="gpass.vert" />
     <None Include="lspass.frag" />
