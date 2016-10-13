@@ -116,6 +116,8 @@
     <None Include="gpass.vert" />
     <None Include="lspass.frag" />
     <None Include="lspass.vert" />
+    <None Include="post.frag" />
+    <None Include="post.vert" />
     <None Include="quad.frag" />
     <None Include="quad.vert" />
     <None Include="spass.frag" />

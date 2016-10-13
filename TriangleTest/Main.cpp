@@ -15,13 +15,8 @@ void main()
 	input.init(context);
 	Timer time;
 	time.init();
-
-
-//take the texture before everything
-	//color at a UV coord, multiply by itself, rgb < texture color - threshold = black, op is white
-
-
-
+	
+	//TODO: Illumination model
 
 	Geometry quad = makeGeometry(quad_verts, 4, quad_tris, 6);
 	Geometry spear = loadObj("../res/models/soulspear.obj");
@@ -30,9 +25,11 @@ void main()
 	Texture spear_normal = loadTexture("../res/textures/soulspear_normal.tga");
 	Texture spear_diffuse = loadTexture("../res/textures/soulspear_diffuse.tga");
 	Texture spear_specular = loadTexture("../res/textures/soulspear_specular.tga");
+	Texture meleetex = loadTexture("../res/textures/melee.jpg");
 
-	//TODO: FIX HEIGHTMAP GENERATION
-	Texture height = makeHeightMap(128,32);
+	Texture spheretex = makeHeightMap(128,32);
+	Geometry plane = makeGrid(512, 20);
+
 
 	const unsigned char norm_pixels[4] = { 127, 127, 255, 255 };
 	Texture vertex_normals = makeTexture(1, 1, 4, norm_pixels);
@@ -50,7 +47,9 @@ void main()
 	Shader spass = loadShader("../res/shaders/spass.vert", "../res/shaders/spass.frag", true, false, false);
 	Shader lpass = loadShader("../res/shaders/lspass.vert", "../res/shaders/lspass.frag", false, true);
 
-	FrameBuffer glowF = makeFrameBuffer(1280, 720, 3);
+	Shader post = loadShader("../res/shaders/post.vert", "../res/shaders/post.frag");
+
+	FrameBuffer glowF = makeFrameBuffer(1280, 720, 3); //makes glow map
 
 	FrameBuffer screen = { 0, 1280, 720 };
 	FrameBuffer aster = makeFrameBuffer(720,720,1);
@@ -64,6 +63,7 @@ void main()
 	// Its RESOLUTION WILL GREATLY EFFECT THE QUALITY. Try playing around with high/low res.
 	FrameBuffer sframe = makeFrameBuffer(1024, 1024, 0);
 
+	FrameBuffer pframe = makeFrameBuffer(1280, 720, 1);
 
 
 	// Camera information
@@ -76,6 +76,11 @@ void main()
 	glm::mat4 sphereModel = glm::translate(glm::vec3(0.3f, -1, -0.2f));
 	glm::mat4 wallModel = glm::rotate(45.f, glm::vec3(0, -1, 0)) * 
 		glm::translate(glm::vec3(0, 0, -6)) * glm::scale(glm::vec3(10, 10, 1));
+
+	glm::mat4 planeModel = glm::rotate(45.f, glm::vec3(0, -1, 0)) *
+		glm::translate(glm::vec3(20, 0, 0));
+
+	//glm::mat4 wallModel = glm::translate(glm::vec3(0.3f, -1, -0.2f));
 
 	// Light Matrices and data
 	// They can all use the same projection matrix...
@@ -90,6 +95,8 @@ void main()
 	glm::vec4 greenColor = glm::vec4(0, 1, 0, 1);
 
 	float times = 0;
+	float mountScale = 0;;
+
 
 	while (context.step())
 	{
@@ -100,6 +107,7 @@ void main()
 		camView = cam.getView();
 		camProj = cam.getProjection();
 
+		mountScale = sin(times) * 4;
 		cam.update(input, time);
 
 		spearModel = glm::rotate(times, glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(0, -1, 0));
@@ -110,9 +118,10 @@ void main()
 		//	TODO: GLOW MAP
 		clearFrameBuffer(gframe);
 		clearFrameBuffer(glowF);
-		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular);
-		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, height, vertex_normals, white);
-		tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white);
+		tdraw(gpass, spear, gframe, spearModel, camView, camProj, spear_diffuse, spear_normal, spear_specular, false);
+		tdraw(gpass, sphere, gframe, sphereModel, camView, camProj, spheretex, vertex_normals, white, false);
+		//tdraw(gpass, quad, gframe, wallModel, camView, camProj, white, vertex_normals, white, true, meleetex, mountScale);
+		tdraw(gpass, plane, gframe, planeModel, camView, camProj, meleetex, vertex_normals, white, true, meleetex, mountScale);
 		tdraw(glowpass, quad, glowF, gframe.colors[0], 0.2f, 1.0f, 1.0f);
 
 		//tdraw(blur, quad, nframe, gframe.colors[1]);
@@ -150,11 +159,12 @@ void main()
 
 		////////////////////////////
 		// Post Processing
-
+		clearFrameBuffer(pframe);
+		tdraw(post, quad, pframe, glowF.colors[0], lframe.colors[0]);
 		//Bluring image's glow based on velocity
 		// note that the sframe (shadow pass) will only be from the most recent light.
 
-		tdraw(qdraw, quad, screen, glowF.colors[0]);
+		tdraw(qdraw, quad, screen, pframe.colors[0]);
 
 	}
 
