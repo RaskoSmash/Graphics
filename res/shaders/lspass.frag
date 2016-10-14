@@ -16,7 +16,7 @@ layout(location = 4) uniform sampler2D positionMap;
 layout(location = 5) uniform sampler2D shadowMap;
 uniform float shadowBias = 0.1f;
 
-const float shininess = 16.0;
+const float shininess = 2.0;
 
 // Light Data
 layout(location = 6) uniform vec4 lCol;
@@ -72,12 +72,14 @@ void main()
 		outAlbedo   = texture(albedoMap,   vUV) * lamb * lCol;
 		outSpecular = texture(specularMap, vUV) * spec * lCol;
 		outColor    =  outAlbedo + outSpecular;
+
+		//outColor.xyz = pow(outColor.xyz, vec3(1.f/1.8f));
 	}
 	else
 	{
 		vec4 diffuseColor = texture(albedoMap, vUV);
 		vec4 specColor = texture(specularMap, vUV);
-		vec4 ambientColor = diffuseColor + specColor;
+		vec4 ambientColor = vec4(1,1,1,1) * 0.00; //grayscale
 
 		/////////////////////////////////////////////////////
 		/////// Blinn-Phong calculations
@@ -98,8 +100,8 @@ void main()
 			float specAngle = max(dot(halfDir, normal), 0.0);
 			spec = pow(specAngle, shininess);
 		}
-		vec4 colorLinear = ambientColor + lamb * diffuseColor + spec * specColor;
-		vec3 colorGammaCorrected = pow(colorLinear.xyz, vec3(1.0/2.2));
+		vec4 colorLinear = ambientColor + lamb * diffuseColor * lCol + spec * specColor * lCol;
+		vec3 colorGammaCorrected = pow(colorLinear.xyz, vec3(1.0/1.2));
 		/////////////////////////////////////////////////////
 		/////// Shadow Map calculations
 		
@@ -112,8 +114,8 @@ void main()
 		if(texture(shadowMap, sUV.xy).r < sUV.z - shadowBias)
 			discard;
 
-		outAlbedo   = texture(albedoMap,   vUV) + lamb;
-		outSpecular = texture(specularMap, vUV) + spec;
-		outColor    =  vec4((colorGammaCorrected).xyz,1) + ambientColor;
+		outAlbedo   = texture(albedoMap,   vUV) * lamb;
+		outSpecular = texture(specularMap, vUV) * spec;
+		outColor    =  vec4((colorGammaCorrected).xyz,1);
 	}
 }
