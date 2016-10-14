@@ -97,11 +97,15 @@ void main()
 
 	float times = 0;
 	float mountScale = 0;;
+	bool isFailure = 0;
 
 	while (context.step())
 	{
 		time.step();
 		input.step();
+
+		if (input.getKeyState('9') == Input::DOWN) isFailure = true;
+		if (input.getKeyState('0') == Input::DOWN) isFailure = false;
 
 		times += time.getDeltaTime();
 		camView = cam.getView();
@@ -142,7 +146,7 @@ void main()
 		// Light Aggregation
 		tdraw(lpass, quad, lframe, camView,
 			gframe.colors[0], gframe.colors[1], gframe.colors[2], gframe.colors[3],
-			sframe.depth, redColor, redView, lightProj);
+			sframe.depth, redColor, redView, lightProj, isFailure);
 
 		//////////////////////////
 		// Green light!
@@ -155,7 +159,7 @@ void main()
 		// add the green light now.
 		tdraw(lpass, quad, lframe, camView,
 			gframe.colors[0], gframe.colors[1], gframe.colors[2], gframe.colors[3],
-			sframe.depth, greenColor, greenView, lightProj);
+			sframe.depth, greenColor, greenView, lightProj, isFailure);
 
 		////////////////////////////
 		// Post Processing
